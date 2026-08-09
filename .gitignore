@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+models/
+.ipynb_checkpoints/
+.vscode/
+homework.ipynb
+.python-versions
+
+.python-version
+__init__.py

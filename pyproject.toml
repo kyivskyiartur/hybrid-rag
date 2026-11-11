@@ -9,11 +9,13 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "gitsource>=0.0.5",
+    "huggingface-hub>=1.26.0",
     "minsearch>=0.2.0",
     "numpy>=2.5.1",
     "onnxruntime>=1.28.0",
     "openai>=2.53.0",
     "python-dotenv>=1.2.2",
+    "sqlitesearch>=0.3.0",
     "tokenizers>=0.23.1",
     "tqdm>=4.70.0",
 ]
@@ -27,6 +29,5 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "huggingface-hub>=1.26.0",
     "jupyter>=1.1.1",
 ]

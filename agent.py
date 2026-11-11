@@ -28,60 +28,26 @@ SEARCH_TOOL = {
 }
 
 
-def search(
-    text_index,
-    vector_index,
-    embedder,
-    query,
-    num_results=5
-):
-    results = hybrid_search(
-        text_index,
-        vector_index,
-        embedder,
-        query,
-        num_results=num_results
-    )
+def search(text_index, vector_index, embedder, query, num_results=5):
 
+    results = hybrid_search(text_index, vector_index, embedder, query, num_results=num_results)
     return results
 
 
-def make_call(
-    call,
-    text_index,
-    vector_index,
-    embedder
-):
+def make_call(call, text_index, vector_index, embedder):
+
     arguments = json.loads(call.arguments)
 
     if call.name == "search":
-        result = search(
-            text_index,
-            vector_index,
-            embedder,
-            **arguments
-        )
+        result = search(text_index, vector_index, embedder, **arguments)
 
-    result_json = json.dumps(
-        result,
-        indent=2
-    )
+    result_json = json.dumps(result, indent=2)
 
-    return {
-        "type": "function_call_output",
-        "call_id": call.call_id,
-        "output": result_json
-    }
+    return {"type": "function_call_output", "call_id": call.call_id, "output": result_json}
 
 
-def agent_loop(
-    client,
-    text_index,
-    vector_index,
-    embedder,
-    question,
-    model="gpt-5.4-mini"
-):
+def agent_loop(client, text_index, vector_index, embedder, question, model="gpt-5.4-mini"):
+
     messages = [
         {"role": "developer", "content": AGENT_INSTRUCTIONS},
         {"role": "user", "content": question}
@@ -89,6 +55,8 @@ def agent_loop(
 
     iteration = 1
     search_calls = 0
+
+    last_answer="Agent stopped before generating a final answer"
 
     while True:
         print(f"Iteration #{iteration}")
@@ -105,18 +73,9 @@ def agent_loop(
 
         for item in response.output:
             if item.type == "function_call":
-                print(
-                    "Function call:",
-                    item.name,
-                    item.arguments
-                )
+                print("Function call:", item.name, item.arguments)
 
-                call_output = make_call(
-                    item,
-                    text_index,
-                    vector_index,
-                    embedder
-                )
+                call_output = make_call(item, text_index, vector_index, embedder)
 
                 messages.append(call_output)
                 has_function_calls = True
@@ -128,6 +87,8 @@ def agent_loop(
         iteration = iteration + 1
 
         if has_function_calls == False:
+            break
+        elif iteration > 5:
             break
 
     return {

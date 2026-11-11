@@ -6,7 +6,13 @@ models/
 .ipynb_checkpoints/
 .vscode/
 homework.ipynb
-.python-versions
-
-.python-version
 __init__.py
+.DS_Store
+
+chunks_text.db
+chunks_text.db-shm
+chunks_text.db-wal
+
+chunks_vector.db
+chunks_vector.db-shm
+chunks_vector.db-wal

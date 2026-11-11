@@ -68,28 +68,23 @@ Both approaches use the same Hybrid Search implementation.
 
 ```mermaid
 flowchart TD
-    Q["User Question"] --> R{"RAG Approach"}
+    Q["User Question"]
 
-    R -->|Standard RAG| S["Hybrid Search"]
-    R -->|Agentic RAG| A["LLM Agent"]
+    Q --> S["Standard RAG<br/>One retrieval"]
+    Q --> A["Agentic RAG<br/>LLM-directed retrieval"]
 
-    A -->|"Function Calling"| T["Search Tool"]
-    T --> S
+    S --> H["Hybrid Search"]
+    A -->|"Search tool calls"| H
 
-    S --> K["SQLite Keyword Search"]
-    S --> V["SQLite Vector Search"]
+    H --> K["SQLite Keyword Search"]
+    H --> V["SQLite Vector Search"]
 
-    K --> F["Reciprocal Rank Fusion"]
-    V --> F
+    K --> R["Reciprocal Rank Fusion"]
+    V --> R
 
-    F --> C["Relevant Document Chunks"]
-
-    C -->|Standard RAG| P["Build Prompt with Context"]
-    P --> L["OpenAI LLM"]
-
-    C -->|Agentic RAG| A
-    A -->|"Final Response"| O["Generated Answer"]
-    L --> O
+    R --> D["Top 5 Relevant Chunks"]
+    D --> L["OpenAI LLM"]
+    L --> O["Generated Answer"]
 ```
 
 In Standard RAG, retrieval is performed once before answer generation.
@@ -122,9 +117,10 @@ Hybrid Search combines results from both methods using Reciprocal Rank Fusion.
 
 RRF assigns scores based on document positions in each ranked list:
 
-\[
-RRF(d)=\sum_{i=1}^{N}\frac{1}{k+r_i(d)}
-\]
+
+```math
+RRF(d) = \sum_{i=1}^{N} \frac{1}{k + r_i(d)}
+```
 
 Where:
 
